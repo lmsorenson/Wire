@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "wire.h"
+#include "../include/wire.h"
 
 #include <sys/ioctl.h>
 #include <termios.h>
@@ -27,9 +27,6 @@
 static struct termios gOriginalTTYAttrs;
 
 #define kATCommandString    "AT\r\n"
-
-
-//Defined by lucas with lack of better command to end connection.
 #define kENDCommandString   "END\r\n"
 
 
@@ -43,7 +40,7 @@ const int kNumRetries = 3;
 
 // Given the path to a serial device, open the device and configure it.
 // Return the file descriptor associated with the device.
-static int openSerialPort(const char *bsdPath)
+int openSerialPort(const char *bsdPath)
 {
     int fileDescriptor = -1;    //File Descriptor
     int handshake;              //Handshake
@@ -201,7 +198,7 @@ error:
     
 }
 
-static char *logString(const char * str)
+char *logString(const char * str)
 {
     static char buf[2048];
     char *ptr = buf;
@@ -262,7 +259,7 @@ static char *logString(const char * str)
     return buf;
 }
 
-static char *logData(const char * str)
+char *logData(const char * str)
 {
     static char buf[2048];
     char *ptr = buf;
@@ -283,7 +280,7 @@ static char *logData(const char * str)
     return buf;
 }
 
-static bool initializeModem(int fileDescriptor)
+int initializeModem(int fileDescriptor)
 {
     char buffer[256];
     char *bufPtr;

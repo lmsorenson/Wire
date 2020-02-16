@@ -28,6 +28,8 @@ file(
     )
 
 add_executable(wire_example_target ${ExampleMods})
+target_include_directories(wire_example_target PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(wire_example_target wire)
 
 if(ENABLE_DEBUG)
 
