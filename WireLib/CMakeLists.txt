@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.6)
 
-project (wire)
+project (WireLibrary)
 
 set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_CXX_FLAGS "-g")
@@ -17,7 +17,7 @@ file(
     ${PROJECT_SOURCE_DIR}/src/*.c
     )
 
-add_library(wire ${Mods})
+add_library(Wire ${Mods})
 
 
 #create example project
@@ -29,7 +29,7 @@ file(
 
 add_executable(wire_example_target ${ExampleMods})
 target_include_directories(wire_example_target PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(wire_example_target wire)
+target_link_libraries(wire_example_target Wire)
 
 if(ENABLE_DEBUG)
 
