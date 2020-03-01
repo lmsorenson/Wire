@@ -19,5 +19,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    int _file_descriptor;
 };
 #endif // MAINWINDOW_H

@@ -14,23 +14,26 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    char* dev_name = static_cast<char*>(malloc(1024 * sizeof(char)));
+    char directory[] = "/dev/";
+    listDevices(directory, dev_name);
+
+    //open the serial port
+    _file_descriptor=openSerialPort(dev_name);
+
     this->GetArduino(ui);
 
+    free(dev_name);
 }
 
 int MainWindow::GetArduino(Ui::MainWindow * ui)
 {
-    int fileDescriptor;
-
-    //open the serial port
-    fileDescriptor=openSerialPort("/dev/cu.usbmodem14601");
-
-    if(fileDescriptor != -1)
+    if(_file_descriptor != -1)
     {
 
         char* data = static_cast<char*>(malloc(1024*sizeof(char)));
 
-        if(readSerialPort(fileDescriptor, data)!=0)
+        if(readSerialPort(_file_descriptor, data)!=0)
         {
         }
         else
@@ -50,9 +53,6 @@ int MainWindow::GetArduino(Ui::MainWindow * ui)
         ui->throttle_slider->setSliderPosition(throttle_slider_value);
 
         free(data);
-
-        //close the serial port
-        closeSerialPort(fileDescriptor);
     }
 
     return 0;
@@ -60,6 +60,7 @@ int MainWindow::GetArduino(Ui::MainWindow * ui)
 
 MainWindow::~MainWindow()
 {
+    closeSerialPort(_file_descriptor);
     delete ui;
 }
 
