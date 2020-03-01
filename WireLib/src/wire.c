@@ -383,7 +383,7 @@ void writeSerialPort(int fileDescriptor, char * InString )
 
 }
 
-char * readSerialPort( int fileDescriptor )
+int readSerialPort( int fileDescriptor, char * dst )
 {
     
     char buffer[1024];
@@ -421,7 +421,8 @@ char * readSerialPort( int fileDescriptor )
     
     printf("Read \"%s\"\n", buffer);
     
-    return buffer;
+    strcpy(dst, buffer);
+    return 0;
     
     //Sample a token from buffer.
     //out_token = strtok ( bufPtr,":" );
@@ -432,7 +433,7 @@ char * readSerialPort( int fileDescriptor )
     
 error:
     
-    return "NULL";
+    return 1;
     
 }
 

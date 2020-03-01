@@ -1,6 +1,6 @@
 #include <wire.h>
 
-void main()
+int main()
 {
     printf("hello world! \n");
 
@@ -9,14 +9,31 @@ void main()
     //open the serial port
     fileDescriptor=openSerialPort("/dev/cu.usbmodem14601");
 
-    //print data from the serial port.
-    char* data = readSerialPort(fileDescriptor);
+    if(fileDescriptor != -1)
+    {
 
-    //print data from the serial port.
-    printf("\n\nSerial Port Data\n");
-    printf(data);
-    printf("\n");
+        char* data;
+    
+        if(readSerialPort(fileDescriptor, data)!=0)
+        {
+            return 1;
+            
+        }
+        else
+        {
+            //print data from the serial port.
+            printf("\n\nSerial Port Data\n");
+            printf("%s", data);
+            printf("\n");
 
-    //close the serial port
-    closeSerialPort(fileDescriptor);
+            GetDescriptor(data);
+        }
+        
+
+        //close the serial port
+        closeSerialPort(fileDescriptor);
+
+    }
+
+    return 0;
 }

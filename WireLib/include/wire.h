@@ -8,8 +8,10 @@ char *logString(const char * str);
 char *logData(const char * str);
 int initializeModem(int fileDescriptor);
 void writeSerialPort(int fileDescriptor, char * InString);
-char *readSerialPort(int fileDescriptor);
+int readSerialPort(int fileDescriptor, char * dst);
 int closeSerialPort(int fileDescriptor);
+
+int GetDescriptor(char str[]);
 
 
 #endif
