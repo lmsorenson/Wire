@@ -13,5 +13,7 @@ int closeSerialPort(int fileDescriptor);
 
 int GetDescriptorValue(char str[], char ch);
 
+int listDevices(char * search_directory, char * dst);
+
 
 #endif
