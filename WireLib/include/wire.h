@@ -11,7 +11,7 @@ void writeSerialPort(int fileDescriptor, char * InString);
 int readSerialPort(int fileDescriptor, char * dst);
 int closeSerialPort(int fileDescriptor);
 
-int GetDescriptor(char str[]);
+int GetDescriptorValue(char str[], char ch);
 
 
 #endif

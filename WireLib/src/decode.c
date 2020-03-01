@@ -2,35 +2,25 @@
 
 #include <stdio.h>
 
-int GetDescriptor(char str[])
+int GetDescriptorValue(char str[], char ch)
 {
-    printf("%s\n", str);
 
+    char buffer[1024];
+    strcpy(buffer, str);
 
-    char* pch = strtok(str, ".");
-
-
+    char* pch = strtok(buffer, ".");
 
     while(pch!=NULL)
     {
+        if( pch[0] == ch )
+        {
+            char value_buffer[strlen(pch)];
+            memcpy(value_buffer, &pch[1], strlen(pch));
 
-
-        // printf("%s\n", pch);
-
-        // printf("buffer: %s, character: %s\n", local_buffer, character);
-
-        // if( strcmp(local_buffer, character)==0 )
-        // {
-        //     char value_buffer[strlen(pch)];
-        //     memcpy(value_buffer, &pch[1], strlen(pch));
-
-            
-
-        //     return atoi(value_buffer);
-        // }
+            return atoi(value_buffer);
+        }
 
         pch = strtok(NULL, ".");
-
     }
 
     return -1;
