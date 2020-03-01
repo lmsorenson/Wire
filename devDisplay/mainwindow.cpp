@@ -1,15 +1,11 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "QDebug"
+#include <QSlider>
 
-//#include <wire.h>
-
-extern "C" {
-    int openSerialPort(const char *bsdPath);
-    int initializeModem(int fileDescriptor);
-    void writeSerialPort(int fileDescriptor, char * InString);
-    char *readSerialPort(int fileDescriptor);
-    int closeSerialPort(int fileDescriptor);
+extern "C"
+{
+    #include <wire.h>
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -18,21 +14,48 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    this->GetArduino(ui);
+
+}
+
+int MainWindow::GetArduino(Ui::MainWindow * ui)
+{
     int fileDescriptor;
 
-   //open the serial port
-   fileDescriptor=openSerialPort("/dev/cu.usbmodem14601");
+    //open the serial port
+    fileDescriptor=openSerialPort("/dev/cu.usbmodem14601");
 
-   //print data from the serial port.
-   QString data = QString((const char*)readSerialPort(fileDescriptor));
+    if(fileDescriptor != -1)
+    {
 
-   //print data from the serial port.
-   qDebug() << "\n\nSerial Port Data\n";
-   qDebug() << data;
-   qDebug() << "\n";
+        char* data = static_cast<char*>(malloc(1024*sizeof(char)));
 
-   //close the serial port
-   closeSerialPort(fileDescriptor);
+        if(readSerialPort(fileDescriptor, data)!=0)
+        {
+        }
+        else
+        {
+            //print data from the serial port.
+            qDebug() << "Serial Port Data\n";
+            qDebug() << "B: " << GetDescriptorValue(data, 'B') << "\n";
+            qDebug() << "T: " << GetDescriptorValue(data, 'T') << "\n";
+            qDebug() << "S: " << GetDescriptorValue(data, 'S') << "\n";
+        }
+
+        int
+        steer_slider_value=((GetDescriptorValue(data, 'S')+1000)/20),
+        throttle_slider_value=(GetDescriptorValue(data, 'T')/10);
+
+        ui->steer_slider->setSliderPosition(steer_slider_value);
+        ui->throttle_slider->setSliderPosition(throttle_slider_value);
+
+        free(data);
+
+        //close the serial port
+        closeSerialPort(fileDescriptor);
+    }
+
+    return 0;
 }
 
 MainWindow::~MainWindow()

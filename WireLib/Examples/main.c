@@ -1,4 +1,5 @@
 #include <wire.h>
+#include <stdio.h>
 
 int main()
 {

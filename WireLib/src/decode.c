@@ -1,6 +1,8 @@
 #include "../include/wire.h"
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 int GetDescriptorValue(char str[], char ch)
 {

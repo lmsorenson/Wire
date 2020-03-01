@@ -15,6 +15,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    int GetArduino(Ui::MainWindow * ui);
+
 private:
     Ui::MainWindow *ui;
 };
