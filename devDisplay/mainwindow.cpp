@@ -2,6 +2,8 @@
 #include "./ui_mainwindow.h"
 #include "QDebug"
 #include <QSlider>
+#include <QTimer>
+#include <QTime>
 
 extern "C"
 {
@@ -21,7 +23,9 @@ MainWindow::MainWindow(QWidget *parent)
     //open the serial port
     _file_descriptor=openSerialPort(dev_name);
 
-    this->GetArduino(ui);
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &MainWindow::HandleTime);
+    timer->start(500);
 
     free(dev_name);
 }
@@ -32,6 +36,8 @@ int MainWindow::GetArduino(Ui::MainWindow * ui)
     {
 
         char* data = static_cast<char*>(malloc(1024*sizeof(char)));
+
+        writeSerialPort(_file_descriptor, "GetStatus\n");
 
         if(readSerialPort(_file_descriptor, data)!=0)
         {
@@ -57,6 +63,12 @@ int MainWindow::GetArduino(Ui::MainWindow * ui)
 
     return 0;
 }
+
+void MainWindow::HandleTime()
+{
+    this->GetArduino(ui);
+}
+
 
 MainWindow::~MainWindow()
 {

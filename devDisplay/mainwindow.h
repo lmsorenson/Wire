@@ -16,6 +16,7 @@ public:
     ~MainWindow();
 
     int GetArduino(Ui::MainWindow * ui);
+    void HandleTime();
 
 private:
     Ui::MainWindow *ui;

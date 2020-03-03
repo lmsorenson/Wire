@@ -107,7 +107,7 @@ int openSerialPort(const char *bsdPath)
     options.c_cc[VMIN] = 0;
     options.c_cc[VTIME] = 10;
     
-    cfsetspeed(&options, B19200);       // Set 19200 baud
+    cfsetspeed(&options, B9600);       // Set 19200 baud
     //cfsetspeed(&options, B9600);       // Set 19200 baud
     options.c_cflag |= (CS7        |    // Use 7 bit words
                         PARENB     |    // Parity enable (even parity if PARODD not also set)

@@ -18,6 +18,8 @@ int main()
 
         char* data = (char*)malloc(1024 * sizeof(char));
     
+        writeSerialPort(fileDescriptor, "GetStatus\n");
+
         if(readSerialPort(fileDescriptor, data)!=0)
         {
             return 1;
@@ -25,12 +27,14 @@ int main()
         else
         {
             //print data from the serial port.
-            printf("\n\nSerial Port Data\n");
+            printf("\n\nSerial Port Data-%s\n", data);
             printf("B: %i\n", GetDescriptorValue(data, 'B'));
             printf("T: %i\n", GetDescriptorValue(data, 'T'));
             printf("S: %i\n", GetDescriptorValue(data, 'S'));
 
         }
+
+        
         
 
         free(data);
