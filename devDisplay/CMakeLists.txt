@@ -37,6 +37,8 @@ if(ANDROID)
     mainwindow.cpp
     mainwindow.h
     mainwindow.ui
+    embedded_device.cpp
+    embedded_device.h
   )
 else()
   add_executable(devDisplay
@@ -44,6 +46,8 @@ else()
     mainwindow.cpp
     mainwindow.h
     mainwindow.ui
+    embedded_device.cpp
+    embedded_device.h
   )
 endif()
 

@@ -18,7 +18,7 @@ int main()
 
         char* data = (char*)malloc(1024 * sizeof(char));
     
-        writeSerialPort(fileDescriptor, "GetStatus\n");
+        writeSerialPort(fileDescriptor, "~Status\n");
 
         if(readSerialPort(fileDescriptor, data)!=0)
         {
@@ -34,14 +34,10 @@ int main()
 
         }
 
-        
-        
-
         free(data);
 
         //close the serial port
         closeSerialPort(fileDescriptor);
-
     }
 
     free(dev_name);
