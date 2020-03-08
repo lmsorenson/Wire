@@ -6,19 +6,20 @@ int main()
 {
     int fileDescriptor;
 
-    char* dev_name = (char*)malloc(1024 * sizeof(char));
+    char* dev_name[5];
 
     listDevices("/dev/", dev_name);
 
     //open the serial port
-    fileDescriptor=openSerialPort(dev_name);
+    printf("Attempting to open port: %s", dev_name[0]);
+    fileDescriptor=openSerialPort(dev_name[0]);
 
     if(fileDescriptor != -1)
     {
 
         char* data = (char*)malloc(1024 * sizeof(char));
     
-        writeSerialPort(fileDescriptor, "~Status\n");
+        writeSerialPort(fileDescriptor, "~Status");
 
         if(readSerialPort(fileDescriptor, data)!=0)
         {
@@ -40,7 +41,12 @@ int main()
         closeSerialPort(fileDescriptor);
     }
 
-    free(dev_name);
+
+    for(int i=0; i<5; i++)
+    {
+        free(dev_name[i]);
+    } 
+    
 
     return 0;
 }

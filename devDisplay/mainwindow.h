@@ -4,6 +4,7 @@
 #include "embedded_device.h"
 
 #include <QMainWindow>
+#include <vector>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,15 +18,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    QString GetArduinoType();
-    int GetArduinoStatus(embedded_device * device);
     void HandleTime();
 
 private:
     Ui::MainWindow *ui;
 
-    embedded_device *device;
+    std::vector<embedded_device*> _device;
 
-    int _file_descriptor;
 };
 #endif // MAINWINDOW_H

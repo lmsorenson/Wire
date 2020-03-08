@@ -5,18 +5,28 @@
 #include <QWidget>
 #include <QString>
 
+extern "C"
+{
+    #include <wire.h>
+}
+
 class embedded_device : public QWidget
 {
     Q_OBJECT
 public:
-    explicit embedded_device(QString name, QWidget *parent = nullptr);
+    explicit embedded_device(char* path, QWidget *parent = nullptr);
+    ~embedded_device();
 
+    QString GetArduinoType();
+    int GetArduinoStatus(embedded_device * device);
 
     QSlider * slider1;
     QSlider * slider2;
 
     void setSteer(int value);
     void setThrottle(int value);
+
+    int _file_descriptor;
 
 signals:
 

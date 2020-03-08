@@ -11,7 +11,7 @@ void writeSerialPort(int fileDescriptor, char * InString);
 int readSerialPort(int fileDescriptor, char * dst);
 
 int GetDescriptorValue(char str[], char ch);
-int listDevices(char * search_directory, char * dst);
+int listDevices(char * search_directory, char *dst[5]);
 
 
 #endif
