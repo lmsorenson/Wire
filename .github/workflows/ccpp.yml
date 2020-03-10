@@ -2,9 +2,9 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ release ]
   pull_request:
-    branches: [ master ]
+    branches: [ release ]
 
 jobs:
   build:
@@ -23,14 +23,6 @@ jobs:
       run: |
         cd WireLib/cmake/
         make
-    - name: make check
-      run: |
-        cd WireLib/cmake/
-        make check
-    - name: make distcheck
-      run: |
-        cd WireLib/cmake/
-        make distcheck
     - name: Generate DevDisplay make files with CMake
       run: |
         cd devDisplay
@@ -41,11 +33,3 @@ jobs:
       run: |
         cd devDisplay/cmake/
         make
-    - name: make check
-      run: |
-        cd devDisplay/cmake/
-        make check
-    - name: make distcheck
-      run: |
-        cd devDisplay/cmake/
-        make distcheck
