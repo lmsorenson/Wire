@@ -23,13 +23,13 @@ jobs:
       run: |
         cd WireLib/cmake/
         make
-    - name: Generate DevDisplay make files with CMake
-      run: |
-        cd devDisplay
-        mkdir cmake
-        cd cmake
-        cmake ..
-    - name: Make DevDisplay
-      run: |
-        cd devDisplay/cmake/
-        make
+#     - name: Generate DevDisplay make files with CMake
+#       run: |
+#         cd devDisplay
+#         mkdir cmake
+#         cd cmake
+#         cmake ..
+#     - name: Make DevDisplay
+#       run: |
+#         cd devDisplay/cmake/
+#         make
