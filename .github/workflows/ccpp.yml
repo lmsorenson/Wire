@@ -9,14 +9,16 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     
     steps:
     - uses: actions/checkout@v2
-    - name: configure
+    - name: Generate make files with CMake
       run: |
-        ls
-    - name: make
+        cd WireLib
+        mkdir cmake
+        cd cmake
+    - name: run make
       run: make
     - name: make check
       run: make check
