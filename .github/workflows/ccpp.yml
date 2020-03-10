@@ -1,0 +1,35 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ release ]
+  pull_request:
+    branches: [ release ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Generate WireLib make files with CMake
+      run: |
+        cd WireLib
+        mkdir cmake
+        cd cmake
+        cmake ..
+    - name: Make WireLib
+      run: |
+        cd WireLib/cmake/
+        make
+    - name: Generate DevDisplay make files with CMake
+      run: |
+        cd devDisplay
+        mkdir cmake
+        cd cmake
+        cmake ..
+    - name: Make DevDisplay
+      run: |
+        cd devDisplay/cmake/
+        make
