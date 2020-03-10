@@ -18,6 +18,7 @@ jobs:
         cd WireLib
         mkdir cmake
         cd cmake
+        cmake ..
     - name: Make WireLib
       run: |
         cd WireLib/cmake/
@@ -35,7 +36,8 @@ jobs:
         cd devDisplay
         mkdir cmake
         cd cmake
-    - name: Make WireLib
+        cmake ..
+    - name: Make DevDisplay
       run: |
         cd devDisplay/cmake/
         make
