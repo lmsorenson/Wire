@@ -18,14 +18,14 @@ This library contains some procedures for reading from and writing to a serial p
 (https://www.qt.io/download-open-source)
 
 
-### Step2 - Clone this repository:
+#### Step2 - Clone this repository:
 1. Open a terminal on Mac and cd into the directory you'd like to clone the repo to.
 > i.e clone to desktop.  
 > cd ~/Desktop 
 2. Run the clone command.
 > git clone git-repo-url
 
-### Step3 - run CMake
+#### Step3 - run CMake
 1. In the terminal set the working directory to WireLib or devDisplay
 1. Make a directory called 'cmake' and make the new directory the working directory.
 > mkdir cmake  
