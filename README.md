@@ -1,9 +1,14 @@
 # Wire
 This library contains some procedures for reading from and writing to a serial port.  The purpose of this library is to handle communication with embedded devices. 
 
-1. Installation: 
-1. Use Cases: 
+1. Installation: https://github.com/lmsorenson/Wire/blob/master/README.md#Installation
+1. Use Cases: https://github.com/lmsorenson/Wire/blob/master/README.md#use-cases--requirements
 
+
+## Installation
+### Installing Dev Display
+### Intalling and linking WireLib
+### Building WireLib and Dev Display from Source
 
 ## Use Cases & Requirements
 ### Open and maintain a Serial Port using IOKit
