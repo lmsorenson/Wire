@@ -26,13 +26,13 @@ This library contains some procedures for reading from and writing to a serial p
 > git clone git-repo-url
 
 #### Step3 - run CMake
-1. In the terminal set the working directory to WireLib or devDisplay
-1. Make a directory called 'cmake' and make the new directory the working directory.
+* In the terminal set the working directory to WireLib or devDisplay
+* Make a directory called 'cmake' and make the new directory the working directory.
 > mkdir cmake  
 > cd cmake
-1. Run the cmake command to generate the make files. (Making sure to pass in '..' as an argument so CMake will look for the CMakeLists.txt file in the previous directory)
+* Run the cmake command to generate the make files. (Making sure to pass in '..' as an argument so CMake will look for the CMakeLists.txt file in the previous directory)
 > cmake ..
-1. Run make to compile the static library.
+* Run make to compile the static library.
 > make
 
 ## Use Cases & Requirements
