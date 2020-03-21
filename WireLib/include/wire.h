@@ -7,7 +7,7 @@ int openSerialPort(const char *bsdPath);
 int initializeModem(int fileDescriptor);
 int closeSerialPort(int fileDescriptor);
 
-void writeSerialPort(int fileDescriptor, char * InString);
+int writeSerialPort(int fileDescriptor, char * InString);
 int readSerialPort(int fileDescriptor, char * dst);
 
 int GetDescriptorValue(char str[], char ch);
