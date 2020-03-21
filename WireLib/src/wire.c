@@ -401,7 +401,7 @@ int readSerialPort( int fileDescriptor, char * dst )
         
         if (numBytes == -1) {
             printf("Error reading from modem - %s(%d).\n", strerror(errno), errno);
-            return 4
+            return 4;
         }
         
         else if (numBytes > 0)
