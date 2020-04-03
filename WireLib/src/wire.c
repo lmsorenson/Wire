@@ -358,7 +358,7 @@ int initializeModem(int fileDescriptor)
 }
 
 
-void writeSerialPort(int fileDescriptor, char * InString )
+int writeSerialPort(int fileDescriptor, char * InString )
 {
     ssize_t numBytes;
     
@@ -368,18 +368,20 @@ void writeSerialPort(int fileDescriptor, char * InString )
     if ( numBytes == -1 )
     {
         printf("Error writing to modem - %s(%d).\n", strerror(errno), errno);
-        return;
+        return 4;
     }
     //IF write command succeeded write to log.
     else
     {
-        printf("Wrote %ld bytes \"%s\"\n", numBytes, logString(kENDCommandString) );
+        printf("Wrote %ld bytes \"%s\"\n", numBytes, logString(InString) );
     }
     
-    if ( numBytes < strlen(kENDCommandString))
+    if ( numBytes < strlen(InString))
     {
-        return;
+        return 5;
     }
+
+    return 0;
 
 }
 
@@ -399,7 +401,7 @@ int readSerialPort( int fileDescriptor, char * dst )
         
         if (numBytes == -1) {
             printf("Error reading from modem - %s(%d).\n", strerror(errno), errno);
-            goto error;
+            return 4;
         }
         
         else if (numBytes > 0)
@@ -411,7 +413,7 @@ int readSerialPort( int fileDescriptor, char * dst )
         }
         else {
             printf("Nothing read.\n");
-            goto error;
+            return 5;
         }
         
         
@@ -422,19 +424,8 @@ int readSerialPort( int fileDescriptor, char * dst )
     printf("Read \"%s\"\n", buffer);
     
     strcpy(dst, buffer);
+
     return 0;
-    
-    //Sample a token from buffer.
-    //out_token = strtok ( bufPtr,":" );
-    //out_token = buffer;
-    
-    //return bufPtr;
-    
-    
-error:
-    
-    return 1;
-    
 }
 
 
