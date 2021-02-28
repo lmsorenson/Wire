@@ -49,6 +49,7 @@ target_include_directories(
 target_link_libraries(devDisplay PUBLIC Wire Qt5::Widgets)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    message("building package. . .")
     set(prefix "${PROJECT_NAME}.app/Contents")
     set(INSTALL_RUNTIME_DIR "${prefix}/MacOS")
     set(INSTALL_CMAKE_DIR "${prefix}/Resources")
