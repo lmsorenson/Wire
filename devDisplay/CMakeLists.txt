@@ -24,21 +24,25 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 if(ANDROID)
   add_library(devDisplay SHARED
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-    embedded_device.cpp
-    embedded_device.h
+      main.cpp
+      Windows/mainwindow.cpp
+      Windows/mainwindow.h
+      Windows/mainwindow.ui
+      Widgets/EmbeddedDevice.cpp
+      Widgets/EmbeddedDevice.h
+      Widgets/ErroWidget.cpp
+      Widgets/ErrorWidget.h
   )
 else()
   add_executable(devDisplay MACOSX_BUNDLE
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-    embedded_device.cpp
-    embedded_device.h
+        main.cpp
+        Windows/mainwindow.cpp
+        Windows/mainwindow.h
+        Windows/mainwindow.ui
+        Widgets/EmbeddedDevice.cpp
+        Widgets/EmbeddedDevice.h
+        Widgets/ErroWidget.cpp
+        Widgets/ErrorWidget.h
   )
 endif()
 

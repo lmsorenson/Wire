@@ -1,4 +1,4 @@
-#include "embedded_device.h"
+#include "EmbeddedDevice.h"
 
 #include <QGridLayout>
 #include <QGroupBox>
@@ -7,20 +7,18 @@
 #include <QDebug>
 
 
-embedded_device::embedded_device(char* path, QWidget *parent) : QWidget(parent)
+EmbeddedDevice::EmbeddedDevice(char* path, QWidget *parent) : QWidget(parent)
 {
-
-
     //open the serial port
-    _file_descriptor=openSerialPort(path);
+    file_descriptor_=openSerialPort(path);
 
     std::string str = std::string(GetArduinoType().toStdString());
     QString name = str.substr(7).c_str();
 
-    if(_file_descriptor!=-1)
+    if(file_descriptor_ != -1)
         qDebug() << "device connection initialized: '" << name << "'";
 
-    if(_file_descriptor!=-1)
+    if(file_descriptor_ != -1)
         qDebug() << "device: '" << name << "' initialized successfully.";
 
     QGridLayout
@@ -33,41 +31,41 @@ embedded_device::embedded_device(char* path, QWidget *parent) : QWidget(parent)
     lay->addWidget(GroupBox);
     GroupBox->setLayout(groupLay);
 
-    slider1 = new QSlider(Qt::Orientation::Horizontal);
-        slider1->setMinimumWidth(200);
-        slider1->setDisabled(true);
+    slider1_ = new QSlider(Qt::Orientation::Horizontal);
+    slider1_->setMinimumWidth(200);
+    slider1_->setDisabled(true);
 
-    slider2 = new QSlider(Qt::Orientation::Horizontal);
-        slider2->setMinimumWidth(200);
-        slider2->setDisabled(true);
+    slider2_ = new QSlider(Qt::Orientation::Horizontal);
+    slider2_->setMinimumWidth(200);
+    slider2_->setDisabled(true);
 
     groupLay->addWidget(new QLabel("Steer"),0,0);
-    groupLay->addWidget(slider1, 0, 1);
+    groupLay->addWidget(slider1_, 0, 1);
 
     groupLay->addWidget(new QLabel("Throttle"),1,0);
-    groupLay->addWidget(slider2, 1, 1);
+    groupLay->addWidget(slider2_, 1, 1);
 }
 
-embedded_device::~embedded_device()
+EmbeddedDevice::~EmbeddedDevice()
 {
-
-    closeSerialPort(_file_descriptor);
+    slider1_->deleteLater();
+    slider2_->deleteLater();
+    closeSerialPort(file_descriptor_);
 }
 
 
-QString embedded_device::GetArduinoType()
+QString EmbeddedDevice::GetArduinoType()
 {
-    if(_file_descriptor != -1)
+    if(file_descriptor_ != -1)
     {
-
         char* data = static_cast<char*>(malloc(1024*sizeof(char)));
         char * message = static_cast<char*>(malloc(6*sizeof(char)));
 
         message = "~Type";
 
-        writeSerialPort(_file_descriptor, message);
+        writeSerialPort(file_descriptor_, message);
 
-        if(readSerialPort(_file_descriptor, data)!=0)
+        if(readSerialPort(file_descriptor_, data) != 0)
         {
         }
         else
@@ -79,7 +77,6 @@ QString embedded_device::GetArduinoType()
             return data;
         }
 
-
         free(message);
         free(data);
     }
@@ -87,16 +84,15 @@ QString embedded_device::GetArduinoType()
     return "none found";
 }
 
-int embedded_device::GetArduinoStatus(embedded_device * device)
+int EmbeddedDevice::GetArduinoStatus(EmbeddedDevice * device)
 {
-    if(_file_descriptor != -1)
+    if(file_descriptor_ != -1)
     {
-
         char* data = static_cast<char*>(malloc(1024*sizeof(char)));
 
-        writeSerialPort(_file_descriptor, "~Status");
+        writeSerialPort(file_descriptor_, "~Status");
 
-        if(readSerialPort(_file_descriptor, data)!=0)
+        if(readSerialPort(file_descriptor_, data) != 0)
         {
         }
         else
@@ -109,11 +105,11 @@ int embedded_device::GetArduinoStatus(embedded_device * device)
         }
 
         int
-        steer_slider_value=( (GetDescriptorValue(data, 'S')+1000) / 20 ),
-        throttle_slider_value=( GetDescriptorValue(data, 'T') / 10 );
+        steer_slider_value = ( (GetDescriptorValue(data, 'S') + 1000) / 20 ),
+        throttle_slider_value = ( GetDescriptorValue(data, 'T') / 10);
 
-        device->setSteer(steer_slider_value);
-        device->setThrottle(throttle_slider_value);
+        device->SetSteer(steer_slider_value);
+        device->SetThrottle(throttle_slider_value);
 
         free(data);
     }
@@ -121,12 +117,12 @@ int embedded_device::GetArduinoStatus(embedded_device * device)
     return 0;
 }
 
-void embedded_device::setSteer(int value)
+void EmbeddedDevice::SetSteer(int value)
 {
-    slider1->setSliderPosition(value);
+    slider1_->setSliderPosition(value);
 }
 
-void embedded_device::setThrottle(int value)
+void EmbeddedDevice::SetThrottle(int value)
 {
-    slider2->setSliderPosition(value);
+    slider2_->setSliderPosition(value);
 }

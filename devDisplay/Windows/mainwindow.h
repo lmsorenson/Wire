@@ -1,7 +1,7 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
-#include "embedded_device.h"
+#include "Widgets/EmbeddedDevice.h"
+#include "Widgets/ErrorWidget.h"
 
 #include <QMainWindow>
 #include <vector>
@@ -23,7 +23,6 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    std::vector<embedded_device*> _device;
+    std::vector<EmbeddedDevice*> device_;
 
 };
-#endif // MAINWINDOW_H
