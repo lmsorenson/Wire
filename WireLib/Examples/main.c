@@ -7,22 +7,23 @@ int main()
     int fileDescriptor;
 
     char* dev_name[5];
-
+    char* err = (char*)malloc(1024 * sizeof(char));
     listDevices("/dev/", dev_name);
 
     //open the serial port
     printf("Attempting to open port: %s", dev_name[0]);
-    fileDescriptor=openSerialPort(dev_name[0]);
+    fileDescriptor = openSerialPort(dev_name[0], err);
 
     if(fileDescriptor != -1)
     {
-
         char* data = (char*)malloc(1024 * sizeof(char));
     
-        writeSerialPort(fileDescriptor, "~Status");
+        writeSerialPort(fileDescriptor, "~Status", err);
 
-        if(readSerialPort(fileDescriptor, data)!=0)
+        if(readSerialPort(fileDescriptor, data, err)!=0)
         {
+            free(err);
+            free(data);
             return 1;
         }
         else
@@ -48,5 +49,6 @@ int main()
     } 
     
 
+    free (err);
     return 0;
 }
