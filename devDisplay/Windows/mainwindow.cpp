@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Embedded DEV Display");
 
     // run a callback every 500 milliseconds.
     QTimer *timer = new QTimer(this);
