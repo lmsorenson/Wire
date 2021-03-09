@@ -3,32 +3,20 @@
 #include "../include/wire.h"
 
 #include <sys/ioctl.h>
-#include <termios.h>
 
 #include <stdio.h>
 
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <paths.h>
-#include <sysexits.h>
-#include <sys/param.h>
-#include <sys/select.h>
-#include <sys/time.h>
-#include <time.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/IOKitLib.h>
-#include <IOKit/serial/IOSerialKeys.h>
 #include <IOKit/serial/ioss.h>
-#include <IOKit/IOBSD.h>
-
-
 
 static struct termios gOriginalTTYAttrs;
 
 #define kATCommandString    "AT\r\n"
 #define kENDCommandString   "END\r\n"
-
 
 #ifdef LOCAL_ECHO
 #define kOKResponseString   "AT\r\r\nOK\r\n"
@@ -40,7 +28,7 @@ const int kNumRetries = 3;
 
 // Given the path to a serial device, open the device and configure it.
 // Return the file descriptor associated with the device.
-int openSerialPort(const char *bsdPath)
+int openSerialPort(const char *bsdPath, char * err )
 {
     int fileDescriptor = -1;    //File Descriptor
     int handshake;              //Handshake
@@ -55,34 +43,35 @@ int openSerialPort(const char *bsdPath)
     
     fileDescriptor = open(bsdPath, O_RDWR | O_NOCTTY | O_NONBLOCK);
     
-    if (fileDescriptor == -1) {
-       printf("Error opening serial port %s - %s(%d).\n", bsdPath, strerror(errno), errno);
+    if (fileDescriptor == -1)
+    {
+        printf("Error opening serial port %s - %s(%d).\n", bsdPath, strerror(errno), errno);
+        sprintf(err, "Error opening serial port %s - %s(%d).\n", bsdPath, strerror(errno), errno);
         goto error;
     }
-    
-    
-    
-    if (ioctl(fileDescriptor, TIOCEXCL) == -1) {
-        printf("Error setting TIOCEXCL on %s - %s(%d).\n",
-              bsdPath, strerror(errno), errno);
+
+    if (ioctl(fileDescriptor, TIOCEXCL) == -1)
+    {
+        printf("Error setting TIOCEXCL on %s - %s(%d).\n", bsdPath, strerror(errno), errno);
+        sprintf(err, "Error setting TIOCEXCL on %s - %s(%d).\n", bsdPath, strerror(errno), errno);
         goto error;
     }
-    
-    
-    
+
     // Now that the device is open, clear the O_NONBLOCK flag so subsequent I/O will block.
     // See fcntl(2) <x-man-page//2/fcntl> for details.
     
-    if (fcntl(fileDescriptor, F_SETFL, 0) == -1) {
-        printf("Error clearing O_NONBLOCK %s - %s(%d).\n",
-              bsdPath, strerror(errno), errno);
+    if (fcntl(fileDescriptor, F_SETFL, 0) == -1)
+    {
+        printf("Error clearing O_NONBLOCK %s - %s(%d).\n", bsdPath, strerror(errno), errno);
+        sprintf(err, "Error clearing O_NONBLOCK %s - %s(%d).\n", bsdPath, strerror(errno), errno);
         goto error;
     }
     
     // Get the current options and save them so we can restore the default settings later.
-    if (tcgetattr(fileDescriptor, &gOriginalTTYAttrs) == -1) {
-        printf("Error getting tty attributes %s - %s(%d).\n",
-               bsdPath, strerror(errno), errno);
+    if (tcgetattr(fileDescriptor, &gOriginalTTYAttrs) == -1)
+    {
+        printf("Error getting tty attributes %s - %s(%d).\n", bsdPath, strerror(errno), errno);
+        sprintf(err, "Error getting tty attributes %s - %s(%d).\n", bsdPath, strerror(errno), errno);
         goto error;
     }
     
@@ -120,9 +109,10 @@ int openSerialPort(const char *bsdPath)
     // and output speed.
     
     speed = 14400; // Set 14400 baud
-    if (ioctl(fileDescriptor, IOSSIOSPEED, &speed) == -1) {
-        printf("Error calling ioctl(..., IOSSIOSPEED, ...) %s - %s(%d).\n",
-               bsdPath, strerror(errno), errno);
+    if (ioctl(fileDescriptor, IOSSIOSPEED, &speed) == -1)
+    {
+        printf("Error calling ioctl(..., IOSSIOSPEED, ...) %s - %s(%d).\n", bsdPath, strerror(errno), errno);
+        sprintf(err, "Error calling ioctl(..., IOSSIOSPEED, ...) %s - %s(%d).\n", bsdPath, strerror(errno), errno);
     }
     
     // Print the new input and output baud rates. Note that the IOSSIOSPEED ioctl interacts with the serial driver
@@ -134,9 +124,10 @@ int openSerialPort(const char *bsdPath)
     printf("Output baud rate changed to %d\n", (int) cfgetospeed(&options) );
     
     // Cause the new options to take effect immediately.
-    if (tcsetattr(fileDescriptor, TCSANOW, &options) == -1) {
-        printf("Error setting tty attributes %s - %s(%d).\n",
-              bsdPath, strerror(errno), errno);
+    if (tcsetattr(fileDescriptor, TCSANOW, &options) == -1)
+    {
+        printf("Error setting tty attributes %s - %s(%d).\n", bsdPath, strerror(errno), errno);
+        sprintf(err, "Error setting tty attributes %s - %s(%d).\n", bsdPath, strerror(errno), errno);
         goto error;
     }
     
@@ -147,31 +138,35 @@ int openSerialPort(const char *bsdPath)
      //Handshake lines
      
     // Assert Data Terminal Ready (DTR)
-    if (ioctl(fileDescriptor, TIOCSDTR) == -1) {
-        printf("Error asserting DTR %s - %s(%d).\n",
-              bsdPath, strerror(errno), errno);
+    if (ioctl(fileDescriptor, TIOCSDTR) == -1)
+    {
+        printf("Error asserting DTR %s - %s(%d).\n", bsdPath, strerror(errno), errno);
+        sprintf(err, "Error asserting DTR %s - %s(%d).\n", bsdPath, strerror(errno), errno);
     }
     
     // Clear Data Terminal Ready (DTR)
-    if (ioctl(fileDescriptor, TIOCCDTR) == -1) {
-        printf("Error clearing DTR %s - %s(%d).\n",
-              bsdPath, strerror(errno), errno);
+    if (ioctl(fileDescriptor, TIOCCDTR) == -1)
+    {
+        printf("Error clearing DTR %s - %s(%d).\n", bsdPath, strerror(errno), errno);
+        sprintf(err, "Error clearing DTR %s - %s(%d).\n", bsdPath, strerror(errno), errno);
     }
                
     // Set the modem lines depending on the bits set in handshake
     handshake = TIOCM_DTR | TIOCM_RTS | TIOCM_CTS | TIOCM_DSR;
-    if (ioctl(fileDescriptor, TIOCMSET, &handshake) == -1) {
-        printf("Error setting handshake lines %s - %s(%d).\n",
-               bsdPath, strerror(errno), errno);
+    if (ioctl(fileDescriptor, TIOCMSET, &handshake) == -1)
+    {
+        printf("Error setting handshake lines %s - %s(%d).\n", bsdPath, strerror(errno), errno);
+        sprintf(err, "Error setting handshake lines %s - %s(%d).\n", bsdPath, strerror(errno), errno);
     }
 
     // To read the state of the modem lines, use the following ioctl.
     // See tty(4) <x-man-page//4/tty> and ioctl(2) <x-man-page//2/ioctl> for details.
     
     // Store the state of the modem lines in handshake
-    if (ioctl(fileDescriptor, TIOCMGET, &handshake) == -1) {
-        printf("Error getting handshake lines %s - %s(%d).\n",
-               bsdPath, strerror(errno), errno);
+    if (ioctl(fileDescriptor, TIOCMGET, &handshake) == -1)
+    {
+        printf("Error getting handshake lines %s - %s(%d).\n", bsdPath, strerror(errno), errno);
+        sprintf(err, "Error getting handshake lines %s - %s(%d).\n", bsdPath, strerror(errno), errno);
     }
     
     //printf("Handshake lines currently set to %d\n", handshake);
@@ -179,10 +174,11 @@ int openSerialPort(const char *bsdPath)
     
     mics = 1UL;
     
-    if (ioctl(fileDescriptor, IOSSDATALAT, &mics) == -1) {
+    if (ioctl(fileDescriptor, IOSSDATALAT, &mics) == -1)
+    {
         // set latency to 1 microsecond
-        printf("Error setting read latency %s - %s(%d).\n",
-               bsdPath, strerror(errno), errno);
+        printf("Error setting read latency %s - %s(%d).\n", bsdPath, strerror(errno), errno);
+        sprintf(err, "Error setting read latency %s - %s(%d).\n", bsdPath, strerror(errno), errno);
         goto error;
     }
     
@@ -190,7 +186,8 @@ int openSerialPort(const char *bsdPath)
     return fileDescriptor;
     
 error:
-    if (fileDescriptor != -1) {
+    if (fileDescriptor != -1)
+    {
         close(fileDescriptor);
     }
     
@@ -215,7 +212,8 @@ char *logString(const char * str)
         
         else
         {
-            switch (*str) {
+            switch (*str)
+            {
                 case ' ':
                     *ptr++ = *str;
                     break;
@@ -280,7 +278,7 @@ char *logData(const char * str)
     return buf;
 }
 
-int initializeModem(int fileDescriptor)
+int initializeModem(int fileDescriptor, char * err)
 {
     char buffer[256];
     char *bufPtr;
@@ -300,6 +298,7 @@ int initializeModem(int fileDescriptor)
         if ( numBytes == -1 )
         {
             printf("Error writing to modem - %s(%d).\n", strerror(errno), errno);
+            sprintf(err, "Error writing to modem - %s(%d).\n", strerror(errno), errno);
             continue;
         }
         //IF write command succeeded write to log.
@@ -322,8 +321,10 @@ int initializeModem(int fileDescriptor)
         {
             numBytes = read(fileDescriptor, bufPtr, &buffer[sizeof(buffer)] - bufPtr - 1);
             
-            if (numBytes == -1) {
+            if (numBytes == -1)
+            {
                 printf("Error reading from modem - %s(%d).\n", strerror(errno), errno);
+                sprintf(err, "Error reading from modem - %s(%d).\n", strerror(errno), errno);
             }
             
             else if (numBytes > 0)

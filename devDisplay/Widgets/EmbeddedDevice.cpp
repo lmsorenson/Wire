@@ -1,16 +1,32 @@
 #include "EmbeddedDevice.h"
 
+#include <Widgets/ErrorWidget.h>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QString>
 #include <QDebug>
+#include <exception>
 
 
 EmbeddedDevice::EmbeddedDevice(char* path, QWidget *parent) : QWidget(parent)
 {
+    char * err = static_cast<char*>(malloc(1024*sizeof(char)));
+
+    QGridLayout
+            * lay = new QGridLayout(),
+            * groupLay = new QGridLayout();
+
+    this->setLayout(lay);
+
     //open the serial port
-    file_descriptor_=openSerialPort(path);
+    if ((file_descriptor_ = openSerialPort(path, err)) == -1)
+    {
+        qDebug() << "Could not open the serial port: " << err;
+        lay->addWidget(new ErrorWidget(err));
+        free(err);
+        return;
+    }
 
     std::string str = std::string(GetArduinoType().toStdString());
     QString name = str.substr(7).c_str();
@@ -21,13 +37,7 @@ EmbeddedDevice::EmbeddedDevice(char* path, QWidget *parent) : QWidget(parent)
     if(file_descriptor_ != -1)
         qDebug() << "device: '" << name << "' initialized successfully.";
 
-    QGridLayout
-            * lay = new QGridLayout(),
-            * groupLay = new QGridLayout();
-
     QGroupBox * GroupBox = new QGroupBox(name);
-
-    this->setLayout(lay);
     lay->addWidget(GroupBox);
     GroupBox->setLayout(groupLay);
 
@@ -44,12 +54,14 @@ EmbeddedDevice::EmbeddedDevice(char* path, QWidget *parent) : QWidget(parent)
 
     groupLay->addWidget(new QLabel("Throttle"),1,0);
     groupLay->addWidget(slider2_, 1, 1);
+
+    free(err);
 }
 
 EmbeddedDevice::~EmbeddedDevice()
 {
-    slider1_->deleteLater();
-    slider2_->deleteLater();
+    if (slider1_) slider1_->deleteLater();
+    if (slider2_) slider2_->deleteLater();
     closeSerialPort(file_descriptor_);
 }
 
@@ -60,18 +72,20 @@ QString EmbeddedDevice::GetArduinoType()
     {
         char* data = static_cast<char*>(malloc(1024*sizeof(char)));
         char * message = static_cast<char*>(malloc(6*sizeof(char)));
-        char * err = static_cast<char*>(malloc(6*sizeof(char)));
+        char * err = static_cast<char*>(malloc(1024*sizeof(char)));
 
         message = "~Type";
 
         if (writeSerialPort(file_descriptor_, message, err) != 0)
         {
             qDebug() << err;
+            throw std::runtime_error(err);
         }
 
         if(readSerialPort(file_descriptor_, data, err) != 0)
         {
             qDebug() << err;
+            throw std::runtime_error(err);
         }
         else
         {
@@ -79,9 +93,7 @@ QString EmbeddedDevice::GetArduinoType()
             qDebug() << "Serial Port Data - Type\n";
             qDebug() << data;
 
-            free(message);
-            free(data);
-            free(err);
+
             return data;
         }
 
@@ -98,16 +110,18 @@ int EmbeddedDevice::GetArduinoStatus(EmbeddedDevice * device)
     if(file_descriptor_ != -1)
     {
         char* data = static_cast<char*>(malloc(1024*sizeof(char)));
-        char * err = static_cast<char*>(malloc(6*sizeof(char)));
+        char * err = static_cast<char*>(malloc(1024*sizeof(char)));
 
         if(writeSerialPort(file_descriptor_, "~Status", err) != 0)
         {
             qDebug() << err;
+            throw std::runtime_error(err);
         }
 
         if(readSerialPort(file_descriptor_, data, err) != 0)
         {
             qDebug() << err;
+            throw std::runtime_error(err);
         }
         else
         {

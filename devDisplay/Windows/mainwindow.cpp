@@ -58,7 +58,23 @@ void MainWindow::HandleTime()
 {
     for(int i=0; i < device_.size(); i++)
     {
-        device_[i]->GetArduinoStatus(device_[i]);
+        try
+        {
+            device_[i]->GetArduinoStatus(device_[i]);
+        }
+        catch (std::exception ex)
+        {
+            qDebug() << "An exception occurred: " << ex.what();
+            ui->gridLayout->removeWidget(device_[i]);
+            ui->gridLayout->addWidget(new ErrorWidget(ex.what()));
+        }
+        catch (...)
+        {
+            qDebug() << "An unknown exception occurred.";
+
+            ui->gridLayout->removeWidget(device_[i]);
+            ui->gridLayout->addWidget(new ErrorWidget("An unknown error occurred."));
+        }
     }
 }
 

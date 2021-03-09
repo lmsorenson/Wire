@@ -3,8 +3,8 @@
 
 
 
-int openSerialPort(const char *bsdPath);
-int initializeModem(int fileDescriptor);
+int openSerialPort(const char *bsdPath, char * err);
+int initializeModem(int fileDescriptor, char * err);
 int closeSerialPort(int fileDescriptor);
 
 int writeSerialPort(int fileDescriptor, char * InString, char * err);
