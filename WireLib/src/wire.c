@@ -358,7 +358,7 @@ int initializeModem(int fileDescriptor)
 }
 
 
-int writeSerialPort(int fileDescriptor, char * InString )
+int writeSerialPort(int fileDescriptor, char * InString, char * err)
 {
     ssize_t numBytes;
     
@@ -385,7 +385,7 @@ int writeSerialPort(int fileDescriptor, char * InString )
 
 }
 
-int readSerialPort( int fileDescriptor, char * dst )
+int readSerialPort( int fileDescriptor, char * dst, char * err )
 {
     
     char buffer[1024];
@@ -401,6 +401,7 @@ int readSerialPort( int fileDescriptor, char * dst )
         
         if (numBytes == -1) {
             printf("Error reading from modem - %s(%d).\n", strerror(errno), errno);
+            sprintf(err,"Error reading from modem - %s(%d).\n", strerror(errno), errno);
             return 4;
         }
         
@@ -413,6 +414,7 @@ int readSerialPort( int fileDescriptor, char * dst )
         }
         else {
             printf("Nothing read.\n");
+            sprintf(err, "Nothing read.\n");
             return 5;
         }
         

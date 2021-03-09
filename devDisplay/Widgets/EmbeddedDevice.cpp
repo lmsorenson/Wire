@@ -60,13 +60,18 @@ QString EmbeddedDevice::GetArduinoType()
     {
         char* data = static_cast<char*>(malloc(1024*sizeof(char)));
         char * message = static_cast<char*>(malloc(6*sizeof(char)));
+        char * err = static_cast<char*>(malloc(6*sizeof(char)));
 
         message = "~Type";
 
-        writeSerialPort(file_descriptor_, message);
-
-        if(readSerialPort(file_descriptor_, data) != 0)
+        if (writeSerialPort(file_descriptor_, message, err) != 0)
         {
+            qDebug() << err;
+        }
+
+        if(readSerialPort(file_descriptor_, data, err) != 0)
+        {
+            qDebug() << err;
         }
         else
         {
@@ -74,11 +79,15 @@ QString EmbeddedDevice::GetArduinoType()
             qDebug() << "Serial Port Data - Type\n";
             qDebug() << data;
 
+            free(message);
+            free(data);
+            free(err);
             return data;
         }
 
         free(message);
         free(data);
+        free(err);
     }
 
     return "none found";
@@ -89,11 +98,16 @@ int EmbeddedDevice::GetArduinoStatus(EmbeddedDevice * device)
     if(file_descriptor_ != -1)
     {
         char* data = static_cast<char*>(malloc(1024*sizeof(char)));
+        char * err = static_cast<char*>(malloc(6*sizeof(char)));
 
-        writeSerialPort(file_descriptor_, "~Status");
-
-        if(readSerialPort(file_descriptor_, data) != 0)
+        if(writeSerialPort(file_descriptor_, "~Status", err) != 0)
         {
+            qDebug() << err;
+        }
+
+        if(readSerialPort(file_descriptor_, data, err) != 0)
+        {
+            qDebug() << err;
         }
         else
         {
@@ -111,6 +125,7 @@ int EmbeddedDevice::GetArduinoStatus(EmbeddedDevice * device)
         device->SetSteer(steer_slider_value);
         device->SetThrottle(throttle_slider_value);
 
+        free(err);
         free(data);
     }
 
