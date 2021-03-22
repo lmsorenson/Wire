@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13.5" CACHE STRING "Minimum OS X deployment version")
-project(devDisplay LANGUAGES CXX)
+project(devDisplay LANGUAGES CXX VERSION $ENV{DEPLOY_VERSION})
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -24,21 +24,25 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 if(ANDROID)
   add_library(devDisplay SHARED
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-    embedded_device.cpp
-    embedded_device.h
+      main.cpp
+      Windows/mainwindow.cpp
+      Windows/mainwindow.h
+      Windows/mainwindow.ui
+      Widgets/EmbeddedDevice.cpp
+      Widgets/EmbeddedDevice.h
+      Widgets/ErroWidget.cpp
+      Widgets/ErrorWidget.h
   )
 else()
   add_executable(devDisplay MACOSX_BUNDLE
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-    embedded_device.cpp
-    embedded_device.h
+        main.cpp
+        Windows/mainwindow.cpp
+        Windows/mainwindow.h
+        Windows/mainwindow.ui
+        Widgets/EmbeddedDevice.cpp
+        Widgets/EmbeddedDevice.h
+        Widgets/ErroWidget.cpp
+        Widgets/ErrorWidget.h
   )
 endif()
 
