@@ -1,0 +1,59 @@
+language: cpp
+os: osx
+osx_image: xcode12.2
+env:
+  global:
+    - DEPLOY_VERSION=$(<version.txt)
+jobs:
+  include:
+    - os: osx
+      osx_image: xcode12.2
+addons:
+  homebrew:
+    packages:
+      - libarchive
+      - curl
+      - qt
+    update: true
+before_script:
+  - brew upgrade qt
+  - mkdir build
+  - cd build
+script:
+  - |
+    cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5 \
+    -DLibArchive_INCLUDE_DIR=$(brew --prefix libarchive)/include \
+    -DLibArchive_LIBRARIES=$(brew --prefix libarchive)/lib \
+    ..
+  - echo "${DEPLOY_VERSION}"
+  - export DEPLOY_TAG="v${DEPLOY_VERSION}-alpha"
+  - export DEPLOY_FILE_NAME="devDisplay-${DEPLOY_VERSION}-Darwin.dmg"
+  - export DEPLOY_NAME="Dev Display ${DEPLOY_VERSION}"
+  - make
+  - cpack -G DragNDrop
+  - pwd
+  - ls -la
+  - |
+    mkdir drop
+    cp -a "${DEPLOY_FILE_NAME}" ./drop/"${DEPLOY_FILE_NAME}"
+    cd ./drop
+  - |
+    hdiutil attach "${DEPLOY_FILE_NAME}"
+    cp -a "/Volumes/devDisplay-${DEPLOY_VERSION}-Darwin/devDisplay.app" devDisplay.app
+    hdiutil detach "/Volumes/devDisplay-${DEPLOY_VERSION}-Darwin"
+  - zip -r devDisplay.zip devDisplay.app
+before_deploy:
+  - git config --local user.name "lmsorenson"
+  - git config --local user.email "lsorenson20@gmail.com"
+deploy:
+  provider: releases
+  api_key: ${GITHUB_TOKEN}
+  file:
+    - ${DEPLOY_FILE_NAME}
+    - "devDisplay.zip"
+  skip_cleanup: true
+  name: ${DEPLOY_NAME}
+  tag_name: ${DEPLOY_TAG}
+  prerelease: false
