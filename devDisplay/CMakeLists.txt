@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13.5" CACHE STRING "Minimum OS X deployment version")
-project(devDisplay LANGUAGES CXX $ENV{DEPLOY_VERSION})
+project(devDisplay LANGUAGES CXX VERSION $ENV{DEPLOY_VERSION})
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
