@@ -11,12 +11,11 @@ jobs:
 addons:
   homebrew:
     packages:
-      - libarchive
-      - curl
       - qt
     update: true
 before_script:
   - brew upgrade qt
+  - cd devDisplay
   - mkdir build
   - cd build
 script:
@@ -24,8 +23,6 @@ script:
     cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5 \
-    -DLibArchive_INCLUDE_DIR=$(brew --prefix libarchive)/include \
-    -DLibArchive_LIBRARIES=$(brew --prefix libarchive)/lib \
     ..
   - echo "${DEPLOY_VERSION}"
   - export DEPLOY_TAG="v${DEPLOY_VERSION}-alpha"
